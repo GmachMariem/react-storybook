@@ -3,17 +3,16 @@ import './App.css';
 import Autocomplete from "react-autocomplete";
 import "react-autocomplete-input/dist/bundle.css";
 import { useEffect, useState } from 'react';
-import { useSearch } from "./Hooks";
+import { useSearch ,useDebounce} from "./Hooks";
 
 function App() {
   const[value,setValue]=useState('');
 
-  const{articles,status,error}=useSearch(value);
+  const { articles } = useSearch(useDebounce(value,500));
 
   return (
     <>
-    <p>Status:{status}</p>
-    <p>Error:{error}</p>
+    
       <Autocomplete
         getItemValue={(item) => item.label}
         items={articles}
