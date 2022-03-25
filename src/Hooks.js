@@ -1,25 +1,29 @@
 import { useEffect, useState ,useRef,useCallback} from "react";
 import axios from "axios";
 
-export const useSearch = (query) => {
+export const useSearch = (query , limit = 10) => {
   const [state, setState] = useState({
     articles: [],
-    status: 'IDLE',
-    error: '',
+    status: "IDLE",
+    error: "",
   });
-  const cancelToken=useRef(null);
+  const cancelToken = useRef(null);
+  
   useEffect(() => {
-      if(query.length < 3 ){
-          return
-      }
-      if(cancelToken.current){
-           console.log("catch -----");
-          cancelToken.current.cancel();
-      }
-      cancelToken.current=axios.CancelToken.source();
+    if (query.length < 3) {
+      return;
+    }
+
+    if (cancelToken.current) {
+      console.log("catch -----");
+      cancelToken.current.cancel();
+    }
+    cancelToken.current = axios.CancelToken.source();
+    setState({ ...state, status: "PENDING" });
     axios
       .get(
-        `https://en.wikipedia.org/w/api.php?origin=*&action=opensearch&search=${query}`,{cancelToken:cancelToken.current.token}
+        `https://en.wikipedia.org/w/api.php?origin=*&action=opensearch&search=${query}&limit=${limit}`,
+        { cancelToken: cancelToken.current.token }
       )
       .then((response) => {
         const parsedResponse = [];
@@ -37,16 +41,15 @@ export const useSearch = (query) => {
         });
       })
       .catch((error) => {
-        if(axios.isCancel(error)){
-            console.log('catch cancelled')
-        return ;
-       }
+        if (axios.isCancel(error)) {
+          console.log("catch cancelled");
+          return;
+        }
         setState({
           articles: [],
           status: "ERROR",
           error: error,
         });
-     
       });
   }, [query]);
   return state;

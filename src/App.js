@@ -1,21 +1,21 @@
 import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Container from './components/Container';
-import AutoComplete from "./components/AutoComplete";
+
+import Home from "./pages/Home"
+import Search from './pages/Search';
+import NotFound from './pages/NotFound';
 const  App=()=> {
   return (
-    <>
-      <Container>
-        {({ searchValue, onSearchChange, articles }) => (
-          <AutoComplete
-            articles={articles}
-            onSearchChange={onSearchChange}
-            searchValue={searchValue}
-          ></AutoComplete>
-        )}
-      </Container>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/" element={<Home />} />
+
+         <Route path="/search" element={<Search />} />
+
+        <Route element={NotFound} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
